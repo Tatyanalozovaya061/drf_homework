@@ -1,13 +1,30 @@
+# from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
+# from rest_framework.response import Response
+# from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet, generics
+
+# from materials.paginators import CoursePaginator, LessonPaginator
 from materials.serializers import CourseSerializer, LessonSerializer
-from materials.models import Course, Lesson
+from materials.models import Course, Lesson, Subscription
 from users.permissions import IsModerator, IsOwner
 
 
 class CourseViewSet(ModelViewSet):
     serializer_class = CourseSerializer
     queryset = Course.objects.all()
+    # pagination_class = CoursePaginator
+
+    def get_queryset(self):
+        if not self.request.user.groups.filter(name='moderator').exists():
+            return Course.objects.filter(owner=self.request.user)
+        return Course.objects.all()
+
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
+        # new_course = serializer.save()
+        # new_course.owner = self.request.user
+        # new_course.save()
 
     def get_permissions(self):
         if self.action == 'create':
@@ -30,15 +47,22 @@ class LessonCreateAPIView(generics.CreateAPIView):
     permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
-        new_lesson = serializer.save()
-        new_lesson.owner = self.request.user
-        new_lesson.save()
+        serializer.save(owner=self.request.user)
+        # new_lesson = serializer.save()
+        # new_lesson.owner = self.request.user
+        # new_lesson.save()
 
 
 class LessonListAPIView(generics.ListAPIView):
     serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
     permission_classes = [IsAuthenticated, IsOwner | IsModerator]
+    # pagination_class = LessonPaginator
+
+    def get_queryset(self):
+        if not self.request.user.groups.filter(name='moderator').exists():
+            return Lesson.objects.filter(owner=self.request.user)
+        return Lesson.objects.all()
 
 
 class LessonRetrieveAPIView(generics.RetrieveAPIView):
@@ -56,3 +80,22 @@ class LessonUpdateAPIView(generics.UpdateAPIView):
 class LessonDestroyAPIView(generics.DestroyAPIView):
     queryset = Lesson.objects.all()
     permission_classes = [IsAuthenticated, IsOwner]
+
+#
+# class SubscriptionAPIView(APIView):
+#     def post(self, *args, **kwargs):
+#         """Метод для изменения состояния подписки"""
+#         user = self.request.user
+#         course_id = self.request.data.get('course')
+#         course_item = get_object_or_404(Course, pk=course_id)
+#         subs_item = Subscription.objects.filter(user=user, course=course_item)
+#         # Если подписка у пользователя на этот курс есть - удаляем ее
+#         if subs_item.exists():
+#             subs_item.delete()
+#             message = 'подписка удалена'
+#         # Если подписки у пользователя на этот курс нет - создаем ее
+#         else:
+#             Subscription.objects.create(user=user, course=course_item)
+#             message = 'подписка добавлена'
+#         # Возвращаем ответ в API
+#         return Response({"message": message})
