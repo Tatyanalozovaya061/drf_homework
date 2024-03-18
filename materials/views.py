@@ -22,9 +22,6 @@ class CourseViewSet(ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
-        # new_course = serializer.save()
-        # new_course.owner = self.request.user
-        # new_course.save()
 
     def get_permissions(self):
         if self.action == 'create':
@@ -48,9 +45,6 @@ class LessonCreateAPIView(generics.CreateAPIView):
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
-        # new_lesson = serializer.save()
-        # new_lesson.owner = self.request.user
-        # new_lesson.save()
 
 
 class LessonListAPIView(generics.ListAPIView):
