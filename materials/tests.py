@@ -92,10 +92,10 @@ class LessonTestCase(APITestCase):
         )
         # self.client.force_authenticate(user=self.user)
 
-        # self.assertEquals(
-        #     response.status_code,
-        #     status.HTTP_200_OK
-        # )
+        self.assertEquals(
+            response.status_code,
+            status.HTTP_200_OK
+        )
 
     def test_delete_lesson(self):
         """ Тестирование удаления урока """
