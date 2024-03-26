@@ -7,6 +7,6 @@ class UrlValidator:
         self.field = field
 
     def __call__(self, value):
-        url = dict(value).get(self.field)
-        if 'youtube.com/' not in url():
+        url = value.get(self.field)
+        if url and url != 'https://www.youtube.com/':
             raise ValidationError('Ссылка может быть только на Youtube')

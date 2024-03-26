@@ -81,7 +81,7 @@ class LessonTestCase(APITestCase):
         update_data = {
             'name': 'update lesson',
             'description': 'update lesson',
-            "image": "https://www.youtube.com/watch?v=fYNMZWxwxQE&ab_channel=%D0%9C%D0%A3%D0%97",
+            # "image": "https://www.youtube.com/watch?v=fYNMZWxwxQE&ab_channel=%D0%9C%D0%A3%D0%97",
             'course': self.course.id,
             'owner': self.lesson.owner.id
         }
