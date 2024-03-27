@@ -30,17 +30,17 @@ class LessonTestCase(APITestCase):
         data = {
             'name': 'test lesson',
             'description': 'test lesson',
-            'course': self.course,
-            'owner': self.user
+            'course': self.course.id,
+            'owner': self.user.id
         }
         response = self.client.post(
-            'lesson/create/',
+            reverse('materials:lesson_create'),
             data=data
         )
-        # self.assertEquals(
-        #     response.status_code,
-        #     status.HTTP_201_CREATED
-        # )
+        self.assertEquals(
+            response.status_code,
+            status.HTTP_201_CREATED
+        )
 
         self.assertTrue(Lesson.objects.all().exists())
 
