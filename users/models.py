@@ -26,10 +26,14 @@ class Payment(models.Model):
     pay_amount = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='сумма оплаты')
     pay_method = models.CharField(max_length=20, choices=[('cash', 'наличные'), ('transfer', 'перевод на счет')],
                                   verbose_name='тип оплаты')
+    pay_url = models.URLField(max_length=400, verbose_name='ссылка на оплату', **NULLABLE)
+    pay_id = models.CharField(max_length=255, verbose_name='id оплаты', **NULLABLE)
+    price = models.PositiveIntegerField(default=20000, verbose_name='стоимость курса')
+
 
     class Meta:
         verbose_name = 'платеж'
         verbose_name_plural = 'платежи'
 
     def __str__(self):
-        return f'Платеж {self.user}'
+        return f'{self.pay_id}'

@@ -13,6 +13,7 @@ urlpatterns = [
     path('detail/<int:pk>', views.UserDetail.as_view(), name='user-detail'),
     path('update/<int:pk>', views.UserUpdate.as_view(), name='user-update'),
     path('delete/<int:pk>', views.UserDelete.as_view(), name='user-delete'),
+    path('payment/create/', views.PaymentCreateAPIView.as_view(), name='payment-create'),
 
     path('token/', TokenObtainPairView.as_view(), name='token-pair'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token-refresh'),

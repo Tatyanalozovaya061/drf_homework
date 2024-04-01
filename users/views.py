@@ -8,10 +8,23 @@ from rest_framework.filters import SearchFilter, OrderingFilter
 
 from rest_framework.permissions import IsAuthenticated
 
+from users.services import create_stripe_product_and_price, create_stripe_session
+
 
 class UserViewSet(ModelViewSet):
     serializer_class = UserSerializer
     queryset = User.objects.all()
+
+
+class PaymentCreateAPIView(generics.CreateAPIView):
+    serializer_class = PaymentSerializer
+    permission_classes = [IsAuthenticated]
+
+    def perform_create(self, serializer):
+        payment = serializer.save()
+        stripe_price_id = create_stripe_product_and_price(payment)
+        payment.pay_url, payment.pay_id = create_stripe_session(stripe_price_id)
+        payment.save()
 
 
 class PaymentListAPIView(generics.ListAPIView):
