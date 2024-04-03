@@ -8,6 +8,7 @@ from materials.paginators import CoursePaginator, LessonPaginator
 from materials.serializers import CourseSerializer, LessonSerializer
 from materials.models import Course, Lesson, Subscription
 from users.permissions import IsModerator, IsOwner
+from materials.tasks import send_mail_about_update
 
 
 class CourseViewSet(ModelViewSet):
@@ -22,6 +23,10 @@ class CourseViewSet(ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
+
+    def perform_update(self, serializer):
+        course = serializer.save()
+        send_mail_about_update.delay(course.id)
 
     def get_permissions(self):
         if self.action == 'create':
